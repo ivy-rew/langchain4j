@@ -1423,7 +1423,7 @@ public abstract class AbstractBaseChatModelIT<M> {
 
     @ParameterizedTest
     @MethodSource("models")
-    @DisabledIf("supportsJsonResponseFormatWithNativeSchema")
+    @EnabledIf("supportsJsonResponseFormatWithNativeSchema")
     protected void should_fail_if_JsonNativeSchema_format_with_schema_is_not_supported(M model) throws Exception {
         var mapper = new ObjectMapper();
         var rawSchema = mapper.readTree(

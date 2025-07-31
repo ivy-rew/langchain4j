@@ -6,7 +6,6 @@ import dev.langchain4j.model.anthropic.internal.api.AnthropicCreateMessageReques
 import dev.langchain4j.model.anthropic.internal.api.AnthropicCreateMessageResponse;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.spi.ServiceHelper;
-
 import java.time.Duration;
 
 @Internal
@@ -17,9 +16,10 @@ public abstract class AnthropicClient {
     /**
      * @since 1.2.0
      */
-    public void createMessage(AnthropicCreateMessageRequest request,
-                              AnthropicCreateMessageOptions options,
-                              StreamingChatResponseHandler handler) {
+    public void createMessage(
+            AnthropicCreateMessageRequest request,
+            AnthropicCreateMessageOptions options,
+            StreamingChatResponseHandler handler) {
         createMessage(request, handler);
     }
 

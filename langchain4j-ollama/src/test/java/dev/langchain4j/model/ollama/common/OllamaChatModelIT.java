@@ -20,14 +20,13 @@ import dev.langchain4j.model.ollama.LC4jOllamaContainer;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.ollama.OllamaChatRequestParameters;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import dev.langchain4j.model.openai.OpenAiChatResponseMetadata;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiTokenUsage;
 import dev.langchain4j.model.output.TokenUsage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -121,8 +120,7 @@ class OllamaChatModelIT extends AbstractChatModelIT {
 
     @Override
     @Disabled("llama 3.1 cannot do it properly")
-    protected void should_execute_a_tool_then_answer_respecting_JSON_response_format_with_schema(ChatModel model) {
-    }
+    protected void should_execute_a_tool_then_answer_respecting_JSON_response_format_with_schema(ChatModel model) {}
 
     @Override
     @ParameterizedTest

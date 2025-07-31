@@ -2,11 +2,11 @@ package dev.langchain4j.model.anthropic.internal.api;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.util.Objects;
 
 /**
  * @since 1.2.0
@@ -31,8 +31,7 @@ public class AnthropicThinkingContent extends AnthropicMessageContent {
         if (object == null || getClass() != object.getClass()) return false;
         if (!super.equals(object)) return false;
         AnthropicThinkingContent that = (AnthropicThinkingContent) object;
-        return Objects.equals(thinking, that.thinking)
-                && Objects.equals(signature, that.signature);
+        return Objects.equals(thinking, that.thinking) && Objects.equals(signature, that.signature);
     }
 
     @Override
@@ -42,9 +41,6 @@ public class AnthropicThinkingContent extends AnthropicMessageContent {
 
     @Override
     public String toString() {
-        return "AnthropicThinkingContent{" +
-                "thinking='" + thinking + '\'' +
-                ", signature='" + signature + '\'' +
-                '}';
+        return "AnthropicThinkingContent{" + "thinking='" + thinking + '\'' + ", signature='" + signature + '\'' + '}';
     }
 }

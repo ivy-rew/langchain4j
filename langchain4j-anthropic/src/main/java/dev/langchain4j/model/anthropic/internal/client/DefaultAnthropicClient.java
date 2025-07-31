@@ -1,8 +1,26 @@
 package dev.langchain4j.model.anthropic.internal.client;
 
+import static dev.langchain4j.http.client.HttpMethod.POST;
+import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onCompleteResponse;
+import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onCompleteToolCall;
+import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onPartialResponse;
+import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onPartialThinking;
+import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onPartialToolCall;
+import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.withLoggingExceptions;
+import static dev.langchain4j.internal.Utils.getOrDefault;
+import static dev.langchain4j.internal.Utils.isNotNullOrBlank;
+import static dev.langchain4j.internal.Utils.isNotNullOrEmpty;
+import static dev.langchain4j.internal.Utils.isNullOrEmpty;
+import static dev.langchain4j.internal.ValidationUtils.ensureNotBlank;
+import static dev.langchain4j.model.anthropic.internal.client.Json.fromJson;
+import static dev.langchain4j.model.anthropic.internal.client.Json.toJson;
+import static dev.langchain4j.model.anthropic.internal.mapper.AnthropicMapper.REDACTED_THINKING_KEY;
+import static dev.langchain4j.model.anthropic.internal.mapper.AnthropicMapper.THINKING_SIGNATURE_KEY;
+import static dev.langchain4j.model.anthropic.internal.mapper.AnthropicMapper.toFinishReason;
+import static java.util.Collections.synchronizedList;
+import static java.util.stream.Collectors.joining;
+
 import dev.langchain4j.Internal;
-import dev.langchain4j.model.chat.response.CompleteToolCall;
-import dev.langchain4j.model.chat.response.PartialToolCall;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.http.client.HttpClient;
@@ -24,9 +42,10 @@ import dev.langchain4j.model.anthropic.internal.api.AnthropicStreamingData;
 import dev.langchain4j.model.anthropic.internal.api.AnthropicUsage;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.ChatResponseMetadata;
+import dev.langchain4j.model.chat.response.CompleteToolCall;
+import dev.langchain4j.model.chat.response.PartialToolCall;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.output.FinishReason;
-
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,26 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static dev.langchain4j.http.client.HttpMethod.POST;
-import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onCompleteResponse;
-import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onCompleteToolCall;
-import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onPartialResponse;
-import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onPartialThinking;
-import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.onPartialToolCall;
-import static dev.langchain4j.internal.InternalStreamingChatResponseHandlerUtils.withLoggingExceptions;
-import static dev.langchain4j.internal.Utils.getOrDefault;
-import static dev.langchain4j.internal.Utils.isNotNullOrBlank;
-import static dev.langchain4j.internal.Utils.isNotNullOrEmpty;
-import static dev.langchain4j.internal.Utils.isNullOrEmpty;
-import static dev.langchain4j.internal.ValidationUtils.ensureNotBlank;
-import static dev.langchain4j.model.anthropic.internal.client.Json.fromJson;
-import static dev.langchain4j.model.anthropic.internal.client.Json.toJson;
-import static dev.langchain4j.model.anthropic.internal.mapper.AnthropicMapper.REDACTED_THINKING_KEY;
-import static dev.langchain4j.model.anthropic.internal.mapper.AnthropicMapper.THINKING_SIGNATURE_KEY;
-import static dev.langchain4j.model.anthropic.internal.mapper.AnthropicMapper.toFinishReason;
-import static java.util.Collections.synchronizedList;
-import static java.util.stream.Collectors.joining;
 
 @Internal
 public class DefaultAnthropicClient extends AnthropicClient {
@@ -108,9 +107,10 @@ public class DefaultAnthropicClient extends AnthropicClient {
     }
 
     @Override
-    public void createMessage(AnthropicCreateMessageRequest request,
-                              AnthropicCreateMessageOptions options,
-                              StreamingChatResponseHandler handler) {
+    public void createMessage(
+            AnthropicCreateMessageRequest request,
+            AnthropicCreateMessageOptions options,
+            StreamingChatResponseHandler handler) {
 
         ServerSentEventListener eventListener = new ServerSentEventListener() {
 
@@ -280,7 +280,8 @@ public class DefaultAnthropicClient extends AnthropicClient {
                                 .index(completeToolCall.index())
                                 .id(completeToolCall.toolExecutionRequest().id())
                                 .name(completeToolCall.toolExecutionRequest().name())
-                                .partialArguments(completeToolCall.toolExecutionRequest().arguments())
+                                .partialArguments(
+                                        completeToolCall.toolExecutionRequest().arguments())
                                 .build();
                         onPartialToolCall(handler, partialToolRequest);
                     }
@@ -308,13 +309,11 @@ public class DefaultAnthropicClient extends AnthropicClient {
 
             private ChatResponse build() {
 
-                String text = contents.stream()
-                        .filter(content -> !content.isEmpty())
-                        .collect(joining("\n"));
+                String text =
+                        contents.stream().filter(content -> !content.isEmpty()).collect(joining("\n"));
 
-                String thinking = thinkings.stream()
-                        .filter(content -> !content.isEmpty())
-                        .collect(joining("\n"));
+                String thinking =
+                        thinkings.stream().filter(content -> !content.isEmpty()).collect(joining("\n"));
 
                 Map<String, Object> attributes = new HashMap<>();
                 String thinkingSignature = thinkingSignatures.stream()

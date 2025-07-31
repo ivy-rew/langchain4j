@@ -15,9 +15,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.atLeast;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.common.AbstractStreamingChatModelIT;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
@@ -31,6 +28,9 @@ import dev.langchain4j.model.openai.OpenAiChatResponseMetadata;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiTokenUsage;
 import dev.langchain4j.model.output.TokenUsage;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.condition.EnabledIf;
@@ -122,8 +122,8 @@ class OllamaStreamingChatModelIT extends AbstractStreamingChatModelIT {
 
     @Override
     @Disabled("llama 3.1 cannot do it properly")
-    protected void should_execute_a_tool_then_answer_respecting_JSON_response_format_with_schema(StreamingChatModel model) {
-    }
+    protected void should_execute_a_tool_then_answer_respecting_JSON_response_format_with_schema(
+            StreamingChatModel model) {}
 
     @Override
     @ParameterizedTest
@@ -275,7 +275,8 @@ class OllamaStreamingChatModelIT extends AbstractStreamingChatModelIT {
     }
 
     @Override
-    protected void verifyToolCallbacks(StreamingChatResponseHandler handler, InOrder io, String id, StreamingChatModel model) {
+    protected void verifyToolCallbacks(
+            StreamingChatResponseHandler handler, InOrder io, String id, StreamingChatModel model) {
         if (model instanceof OpenAiStreamingChatModel) {
             io.verify(handler).onPartialToolCall(partial(0, id, "getWeather", "{\"city\":\"Munich\"}"));
         }
@@ -285,26 +286,25 @@ class OllamaStreamingChatModelIT extends AbstractStreamingChatModelIT {
     @Override
     protected void verifyToolCallbacks(StreamingChatResponseHandler handler, InOrder io, StreamingChatModel model) {
         if (model instanceof OpenAiStreamingChatModel) {
-            io.verify(handler).onPartialToolCall(argThat(toolCall ->
-                    toolCall.index() == 0
+            io.verify(handler)
+                    .onPartialToolCall(argThat(toolCall -> toolCall.index() == 0
                             && !toolCall.id().isBlank()
                             && toolCall.name().equals("get_current_time")
-                            && toolCall.partialArguments().equals("{}")
-            ));
+                            && toolCall.partialArguments().equals("{}")));
         }
 
         // Ollama talks in-between for some reason
         io.verify(handler, atLeast(0)).onPartialResponse(any());
 
-        io.verify(handler).onCompleteToolCall(argThat(request ->
-                request.index() == 0
+        io.verify(handler)
+                .onCompleteToolCall(argThat(request -> request.index() == 0
                         && request.toolExecutionRequest().name().equals("get_current_time")
-                        && request.toolExecutionRequest().arguments().equals("{}")
-        ));
+                        && request.toolExecutionRequest().arguments().equals("{}")));
     }
 
     @Override
-    protected void verifyToolCallbacks(StreamingChatResponseHandler handler, InOrder io, String id1, String id2, StreamingChatModel model) {
+    protected void verifyToolCallbacks(
+            StreamingChatResponseHandler handler, InOrder io, String id1, String id2, StreamingChatModel model) {
         verifyToolCallbacks(handler, io, id1, model);
 
         if (model instanceof OpenAiStreamingChatModel) {

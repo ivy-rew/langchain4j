@@ -1,5 +1,17 @@
 package dev.langchain4j.model.anthropic;
 
+import static dev.langchain4j.data.message.ToolExecutionResultMessage.from;
+import static dev.langchain4j.data.message.UserMessage.userMessage;
+import static dev.langchain4j.internal.Utils.readBytes;
+import static dev.langchain4j.model.anthropic.AnthropicChatModelName.CLAUDE_3_5_HAIKU_20241022;
+import static dev.langchain4j.model.output.FinishReason.LENGTH;
+import static dev.langchain4j.model.output.FinishReason.STOP;
+import static dev.langchain4j.model.output.FinishReason.TOOL_EXECUTION;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
@@ -15,29 +27,16 @@ import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.output.TokenUsage;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-
 import java.net.URI;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
 import java.util.Random;
-
-import static dev.langchain4j.data.message.ToolExecutionResultMessage.from;
-import static dev.langchain4j.data.message.UserMessage.userMessage;
-import static dev.langchain4j.internal.Utils.readBytes;
-import static dev.langchain4j.model.anthropic.AnthropicChatModelName.CLAUDE_3_5_HAIKU_20241022;
-import static dev.langchain4j.model.output.FinishReason.LENGTH;
-import static dev.langchain4j.model.output.FinishReason.STOP;
-import static dev.langchain4j.model.output.FinishReason.TOOL_EXECUTION;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @EnabledIfEnvironmentVariable(named = "ANTHROPIC_API_KEY", matches = ".+")
 class AnthropicChatModelIT {
@@ -660,8 +659,7 @@ class AnthropicChatModelIT {
                         AiMessage.from("Hi"),
                         UserMessage.from("What is the"),
                         UserMessage.from("capital of"),
-                        UserMessage.from("Germany?")
-                )
+                        UserMessage.from("Germany?"))
                 .build();
 
         // when

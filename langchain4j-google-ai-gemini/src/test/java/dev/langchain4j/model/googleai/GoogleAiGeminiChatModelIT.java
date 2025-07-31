@@ -621,7 +621,8 @@ class GoogleAiGeminiChatModelIT {
         ChatResponse response = gemini.chat(ChatRequest.builder()
                 .messages(
                         SystemMessage.from("Your role is to extract information from the description of a color"),
-                        UserMessage.from("'Cobalt blue' is a blend of a lot of blue, a bit of green, and almost no red."))
+                        UserMessage.from(
+                                "'Cobalt blue' is a blend of a lot of blue, a bit of green, and almost no red."))
                 .build());
 
         Color color = new ObjectMapper().readValue(response.aiMessage().text(), Color.class);

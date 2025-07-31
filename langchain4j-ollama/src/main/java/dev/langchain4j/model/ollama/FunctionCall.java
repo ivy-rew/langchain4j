@@ -1,13 +1,12 @@
 package dev.langchain4j.model.ollama;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-
 import java.util.Map;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(NON_NULL)
@@ -18,8 +17,7 @@ class FunctionCall {
     private String name;
     private Map<String, Object> arguments;
 
-    FunctionCall() {
-    }
+    FunctionCall() {}
 
     FunctionCall(Integer index, String name, Map<String, Object> arguments) {
         this.index = index;

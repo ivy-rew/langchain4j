@@ -14,7 +14,6 @@ import static java.util.Arrays.asList;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.image.Image;
 import dev.langchain4j.data.message.AiMessage;
-import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.ImageContent;
 import dev.langchain4j.data.message.SystemMessage;
 import dev.langchain4j.data.message.UserMessage;
@@ -31,7 +30,6 @@ import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.chat.request.DefaultChatRequestParameters;
 import dev.langchain4j.model.chat.response.PartialThinking;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
-
 import java.time.Duration;
 import java.util.List;
 
@@ -86,7 +84,8 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
                 .temperature(getOrDefault(builder.temperature, commonParameters.temperature()))
                 .topP(getOrDefault(builder.topP, commonParameters.topP()))
                 .topK(getOrDefault(builder.topK, commonParameters.topK()))
-                .maxOutputTokens(getOrDefault(builder.maxTokens, getOrDefault(commonParameters.maxOutputTokens(), 1024)))
+                .maxOutputTokens(
+                        getOrDefault(builder.maxTokens, getOrDefault(commonParameters.maxOutputTokens(), 1024)))
                 .stopSequences(getOrDefault(builder.stopSequences, commonParameters.stopSequences()))
                 .toolSpecifications(getOrDefault(builder.toolSpecifications, commonParameters.toolSpecifications()))
                 .toolChoice(commonParameters.toolChoice())
@@ -290,7 +289,8 @@ public class AnthropicStreamingChatModel implements StreamingChatModel {
     public void doChat(ChatRequest chatRequest, StreamingChatResponseHandler handler) {
         ensureNotNull(handler, "handler");
         validate(chatRequest.parameters());
-        AnthropicCreateMessageRequest anthropicRequest = createAnthropicRequest(chatRequest,
+        AnthropicCreateMessageRequest anthropicRequest = createAnthropicRequest(
+                chatRequest,
                 toThinking(thinkingType, thinkingBudgetTokens),
                 sendThinking,
                 cacheSystemMessages ? EPHEMERAL : NO_CACHE,

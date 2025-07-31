@@ -3,13 +3,12 @@ package dev.langchain4j.model.bedrock;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import dev.langchain4j.Internal;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
-
-import dev.langchain4j.Internal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.core.interceptor.Context;
@@ -48,7 +47,8 @@ class AwsLoggingInterceptor implements ExecutionInterceptor {
         if (logRequests) {
             if (request.method() == SdkHttpMethod.POST && request instanceof SdkHttpFullRequest sdkHttpFullRequest) {
                 try {
-                    ContentStreamProvider csp = sdkHttpFullRequest.contentStreamProvider().orElse(null);
+                    ContentStreamProvider csp =
+                            sdkHttpFullRequest.contentStreamProvider().orElse(null);
                     if (nonNull(csp)) body = IoUtils.toUtf8String(csp.newStream());
                 } catch (IOException e) {
                     logger.warn("Unable to obtain request body", e);
@@ -60,8 +60,7 @@ class AwsLoggingInterceptor implements ExecutionInterceptor {
                     request.getUri(),
                     request.headers(),
                     request.rawQueryParameters(),
-                    body
-            );
+                    body);
         }
     }
 

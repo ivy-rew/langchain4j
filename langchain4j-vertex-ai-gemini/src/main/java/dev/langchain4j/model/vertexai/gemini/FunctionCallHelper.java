@@ -1,5 +1,7 @@
 package dev.langchain4j.model.vertexai.gemini;
 
+import static dev.langchain4j.internal.Utils.isNullOrBlank;
+
 import com.google.cloud.vertexai.api.*;
 import com.google.gson.Gson;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -8,21 +10,17 @@ import com.google.protobuf.Value;
 import com.google.protobuf.util.JsonFormat;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static dev.langchain4j.internal.Utils.isNullOrBlank;
 
 class FunctionCallHelper {
 
     private static final Gson GSON = new Gson();
 
     static FunctionCall fromToolExecutionRequest(ToolExecutionRequest toolExecutionRequest) {
-        FunctionCall.Builder fnCallBuilder = FunctionCall.newBuilder()
-            .setName(toolExecutionRequest.name());
+        FunctionCall.Builder fnCallBuilder = FunctionCall.newBuilder().setName(toolExecutionRequest.name());
 
         Struct.Builder structBuilder = Struct.newBuilder();
         try {
@@ -39,14 +37,11 @@ class FunctionCallHelper {
     }
 
     static List<ToolExecutionRequest> fromFunctionCalls(List<FunctionCall> functionCalls) {
-        return functionCalls.stream()
-                .map(FunctionCallHelper::fromFunctionCall)
-                .toList();
+        return functionCalls.stream().map(FunctionCallHelper::fromFunctionCall).toList();
     }
 
     static ToolExecutionRequest fromFunctionCall(FunctionCall functionCall) {
-        ToolExecutionRequest.Builder builder = ToolExecutionRequest.builder()
-            .name(functionCall.getName());
+        ToolExecutionRequest.Builder builder = ToolExecutionRequest.builder().name(functionCall.getName());
 
         Map<String, Object> callArgsMap = new HashMap<>();
         Struct callArgs = functionCall.getArgs();
@@ -73,11 +68,15 @@ class FunctionCallHelper {
                 break;
             case STRUCT_VALUE:
                 HashMap<String, Object> mapForStruct = new HashMap<>();
-                value.getStructValue().getFieldsMap().forEach((key, val) -> mapForStruct.put(key, unwrapProtoValue(val)));
+                value.getStructValue()
+                        .getFieldsMap()
+                        .forEach((key, val) -> mapForStruct.put(key, unwrapProtoValue(val)));
                 unwrappedValue = mapForStruct;
                 break;
             case LIST_VALUE:
-                unwrappedValue = value.getListValue().getValuesList().stream().map(FunctionCallHelper::unwrapProtoValue).collect(Collectors.toList());
+                unwrappedValue = value.getListValue().getValuesList().stream()
+                        .map(FunctionCallHelper::unwrapProtoValue)
+                        .collect(Collectors.toList());
                 break;
             default: // NULL_VALUE, KIND_NOT_SET, and default
                 unwrappedValue = null;
@@ -90,8 +89,8 @@ class FunctionCallHelper {
         Tool.Builder tool = Tool.newBuilder();
 
         for (ToolSpecification toolSpecification : toolSpecifications) {
-            FunctionDeclaration.Builder fnBuilder = FunctionDeclaration.newBuilder()
-                .setName(toolSpecification.name());
+            FunctionDeclaration.Builder fnBuilder =
+                    FunctionDeclaration.newBuilder().setName(toolSpecification.name());
 
             if (toolSpecification.description() != null) {
                 fnBuilder.setDescription(toolSpecification.description());

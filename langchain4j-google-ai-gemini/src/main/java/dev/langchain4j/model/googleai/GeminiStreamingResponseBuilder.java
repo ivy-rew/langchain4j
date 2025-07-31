@@ -1,23 +1,22 @@
 package dev.langchain4j.model.googleai;
 
+import static dev.langchain4j.internal.Utils.isNullOrBlank;
+import static dev.langchain4j.model.googleai.FinishReasonMapper.fromGFinishReasonToFinishReason;
+import static dev.langchain4j.model.googleai.PartsAndContentsMapper.fromGPartsToAiMessage;
+import static dev.langchain4j.model.output.FinishReason.TOOL_EXECUTION;
+
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.chat.response.ChatResponseMetadata;
 import dev.langchain4j.model.output.FinishReason;
 import dev.langchain4j.model.output.TokenUsage;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static dev.langchain4j.internal.Utils.isNullOrBlank;
-import static dev.langchain4j.model.googleai.FinishReasonMapper.fromGFinishReasonToFinishReason;
-import static dev.langchain4j.model.googleai.PartsAndContentsMapper.fromGPartsToAiMessage;
-import static dev.langchain4j.model.output.FinishReason.TOOL_EXECUTION;
 
 /**
  * A builder class for constructing streaming responses from Gemini AI model.
@@ -77,8 +76,7 @@ class GeminiStreamingResponseBuilder {
         return new TextAndTools(
                 Optional.ofNullable(message.text()),
                 Optional.ofNullable(message.thinking()),
-                message.toolExecutionRequests()
-        );
+                message.toolExecutionRequests());
     }
 
     /**
@@ -122,8 +120,7 @@ class GeminiStreamingResponseBuilder {
             TokenUsage tokenUsage = new TokenUsage(
                     usageMetadata.getPromptTokenCount(),
                     usageMetadata.getCandidatesTokenCount(),
-                    usageMetadata.getTotalTokenCount()
-            );
+                    usageMetadata.getTotalTokenCount());
             this.tokenUsage.set(tokenUsage);
         }
     }

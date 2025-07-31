@@ -2,11 +2,11 @@ package dev.langchain4j.model.anthropic.internal.api;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import java.util.Objects;
 
 /**
  * @since 1.2.0
@@ -39,8 +39,6 @@ public class AnthropicRedactedThinkingContent extends AnthropicMessageContent {
 
     @Override
     public String toString() {
-        return "AnthropicRedactedThinkingContent{" +
-                "data='" + data + '\'' +
-                '}';
+        return "AnthropicRedactedThinkingContent{" + "data='" + data + '\'' + '}';
     }
 }

@@ -9,8 +9,8 @@ import dev.langchain4j.model.chat.listener.ChatModelListener;
 import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.chat.response.StreamingChatResponseHandler;
 import dev.langchain4j.model.mistralai.MistralAiStreamingChatModel;
-import org.mockito.InOrder;
 import java.util.List;
+import org.mockito.InOrder;
 
 class MistralAiStreamingChatModelIT extends AbstractStreamingChatModelIT {
 
@@ -49,9 +49,7 @@ class MistralAiStreamingChatModelIT extends AbstractStreamingChatModelIT {
 
     @Override
     protected ChatRequestParameters createIntegrationSpecificParameters(int maxOutputTokens) {
-        return ChatRequestParameters.builder()
-                .maxOutputTokens(maxOutputTokens)
-                .build();
+        return ChatRequestParameters.builder().maxOutputTokens(maxOutputTokens).build();
     }
 
     @Override

@@ -564,8 +564,8 @@ class InternalOpenAiOfficialHelper {
                     .build();
         } else {
             if (!(jsonSchema.rootElement() instanceof JsonObjectSchema
-          || jsonSchema.rootElement() instanceof JsonNativeSchema)) {
-        throw new IllegalArgumentException(
+                    || jsonSchema.rootElement() instanceof JsonNativeSchema)) {
+                throw new IllegalArgumentException(
                         "For OpenAI, the root element of the JSON Schema must be a JsonObjectSchema, but it was: "
                                 + jsonSchema.rootElement().getClass());
             }

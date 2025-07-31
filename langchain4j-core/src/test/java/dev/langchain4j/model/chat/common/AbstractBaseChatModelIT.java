@@ -14,6 +14,7 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
@@ -23,7 +24,6 @@ import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.exception.UnsupportedFeatureException;
-import dev.langchain4j.internal.JsonSchemaElementUtils;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
@@ -52,10 +52,6 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InOrder;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.common.Json;
 
 /**
  * Contains all the common tests that every {@link ChatModel}
@@ -1430,7 +1426,8 @@ public abstract class AbstractBaseChatModelIT<M> {
     @DisabledIf("supportsJsonResponseFormatWithNativeSchema")
     protected void should_fail_if_JsonNativeSchema_format_with_schema_is_not_supported(M model) throws Exception {
         var mapper = new ObjectMapper();
-        var rawSchema = mapper.readTree("""
+        var rawSchema = mapper.readTree(
+                """
             {
                 "$schema": "http://json-schema.org/draft-07/schema#",
                 "type": "object",
@@ -1441,14 +1438,14 @@ public abstract class AbstractBaseChatModelIT<M> {
                 },
             }""");
 
-
-     ResponseFormat schemaFormat = ResponseFormat.builder()
-            .type(ResponseFormatType.JSON)
-            .jsonSchema(JsonSchema.builder()
-                    .name("Answer")
-                    .rootElement(JsonNativeSchema.builder().schema(rawSchema).build())
-                    .build())
-            .build();
+        ResponseFormat schemaFormat = ResponseFormat.builder()
+                .type(ResponseFormatType.JSON)
+                .jsonSchema(JsonSchema.builder()
+                        .name("Answer")
+                        .rootElement(
+                                JsonNativeSchema.builder().schema(rawSchema).build())
+                        .build())
+                .build();
 
         // given
         ChatRequest chatRequest = ChatRequest.builder()
@@ -1681,9 +1678,9 @@ public abstract class AbstractBaseChatModelIT<M> {
         return supportsTools() && supportsJsonResponseFormatWithSchema();
     }
 
-  protected boolean supportsJsonResponseFormatWithNativeSchema() {
-    return true;
-  }
+    protected boolean supportsJsonResponseFormatWithNativeSchema() {
+        return true;
+    }
 
     protected boolean supportsSingleImageInputAsBase64EncodedString() {
         return true;

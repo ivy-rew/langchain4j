@@ -1474,7 +1474,6 @@ public abstract class AbstractBaseChatModelIT<M> {
         }
     }
 
-
     // MULTI MODALITY: IMAGES: BASE64
 
     @ParameterizedTest

@@ -1,5 +1,18 @@
 package dev.langchain4j.model.openai;
 
+import static dev.langchain4j.data.message.ToolExecutionResultMessage.from;
+import static dev.langchain4j.data.message.UserMessage.userMessage;
+import static dev.langchain4j.internal.Utils.readBytes;
+import static dev.langchain4j.model.chat.request.ToolChoice.REQUIRED;
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
+import static dev.langchain4j.model.openai.OpenAiChatModelName.O3_MINI;
+import static dev.langchain4j.model.output.FinishReason.LENGTH;
+import static dev.langchain4j.model.output.FinishReason.STOP;
+import static dev.langchain4j.model.output.FinishReason.TOOL_EXECUTION;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,30 +37,16 @@ import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.output.TokenUsage;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-
-import static dev.langchain4j.data.message.ToolExecutionResultMessage.from;
-import static dev.langchain4j.data.message.UserMessage.userMessage;
-import static dev.langchain4j.internal.Utils.readBytes;
-import static dev.langchain4j.model.chat.request.ToolChoice.REQUIRED;
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
-import static dev.langchain4j.model.openai.OpenAiChatModelName.O3_MINI;
-import static dev.langchain4j.model.output.FinishReason.LENGTH;
-import static dev.langchain4j.model.output.FinishReason.STOP;
-import static dev.langchain4j.model.output.FinishReason.TOOL_EXECUTION;
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.params.provider.EnumSource.Mode.EXCLUDE;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 @EnabledIfEnvironmentVariable(named = "OPENAI_API_KEY", matches = ".+")
 class OpenAiChatModelIT {
@@ -103,12 +102,12 @@ class OpenAiChatModelIT {
             value = OpenAiChatModelName.class,
             mode = EXCLUDE,
             names = {
-                    "GPT_4_32K", // don't have access
-                    "GPT_4_32K_0613", // don't have access
-                    "O3", // don't have access
-                    "O3_2025_04_16", // don't have access
-                    "O1_MINI", // does not support 'system' role with this model
-                    "O1_MINI_2024_09_12", // does not support 'system' role with this model
+                "GPT_4_32K", // don't have access
+                "GPT_4_32K_0613", // don't have access
+                "O3", // don't have access
+                "O3_2025_04_16", // don't have access
+                "O1_MINI", // does not support 'system' role with this model
+                "O1_MINI_2024_09_12", // does not support 'system' role with this model
             })
     void should_support_all_model_names(OpenAiChatModelName modelName) {
 
@@ -380,8 +379,7 @@ class OpenAiChatModelIT {
 
         // given
         @JsonIgnoreProperties(ignoreUnknown = true) // to ignore the "joke" field
-        record Person(String name, String surname) {
-        }
+        record Person(String name, String surname) {}
 
         String userMessage = "Return JSON with two fields: name and surname of Klaus Heisler. "
                 + "Before returning, tell me a joke."; // nudging it to say something additionally to json
@@ -558,7 +556,8 @@ class OpenAiChatModelIT {
     void should_accept_pdf_file_content() throws Exception {
 
         // given
-        Path file = Paths.get(getClass().getClassLoader().getResource("sample.pdf").toURI());
+        Path file =
+                Paths.get(getClass().getClassLoader().getResource("sample.pdf").toURI());
         String pdfBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(file));
         PdfFile pdfFile = PdfFile.builder()
                 .base64Data(pdfBase64)
@@ -586,14 +585,12 @@ class OpenAiChatModelIT {
         // given
         String city = "Munich";
 
-        record ApproximateLocation(String city) {
-        }
-        record UserLocation(String type, ApproximateLocation approximate) {
-        }
-        record WebSearchOptions(@JsonProperty("user_location") UserLocation userLocation) {
-        }
+        record ApproximateLocation(String city) {}
+        record UserLocation(String type, ApproximateLocation approximate) {}
+        record WebSearchOptions(@JsonProperty("user_location") UserLocation userLocation) {}
 
-        WebSearchOptions webSearchOptions = new WebSearchOptions(new UserLocation("approximate", new ApproximateLocation(city)));
+        WebSearchOptions webSearchOptions =
+                new WebSearchOptions(new UserLocation("approximate", new ApproximateLocation(city)));
         Map<String, Object> customParameters = Map.of("web_search_options", webSearchOptions);
 
         ChatRequest chatRequest = ChatRequest.builder()
@@ -621,7 +618,13 @@ class OpenAiChatModelIT {
 
         SuccessfulHttpResponse rawResponse = ((OpenAiChatResponseMetadata) chatResponse.metadata()).rawHttpResponse();
         JsonNode jsonNode = new ObjectMapper().readTree(rawResponse.body());
-        assertThat(jsonNode.get("choices").get(0).get("message").get("annotations").get(0).get("type").asText())
+        assertThat(jsonNode.get("choices")
+                        .get(0)
+                        .get("message")
+                        .get("annotations")
+                        .get(0)
+                        .get("type")
+                        .asText())
                 .isEqualTo("url_citation");
     }
 }

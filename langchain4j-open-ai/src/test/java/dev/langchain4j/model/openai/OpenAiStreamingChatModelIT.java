@@ -640,10 +640,9 @@ class OpenAiStreamingChatModelIT {
         // given
         String city = "Munich";
 
-        Map<String, Object> customParameters = Map.of("web_search_options", Map.of("user_location", Map.of(
-                "type", "approximate",
-                "approximate", Map.of("city", city)
-        )));
+        Map<String, Object> customParameters = Map.of(
+                "web_search_options",
+                Map.of("user_location", Map.of("type", "approximate", "approximate", Map.of("city", city))));
 
         ChatRequest chatRequest = ChatRequest.builder()
                 .messages(UserMessage.from("Where can I buy good coffee?"))
@@ -671,7 +670,8 @@ class OpenAiStreamingChatModelIT {
         assertThat(chatResponse.aiMessage().text()).contains(city);
 
         List<ServerSentEvent> rawEvents = ((OpenAiChatResponseMetadata) chatResponse.metadata()).rawServerSentEvents();
-        assertThat(rawEvents.stream().filter(event -> event.data().contains("url_citation"))).isNotEmpty();
+        assertThat(rawEvents.stream().filter(event -> event.data().contains("url_citation")))
+                .isNotEmpty();
     }
 
     private static void assertTokenUsage(TokenUsage tokenUsage) {

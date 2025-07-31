@@ -23,6 +23,7 @@ import dev.langchain4j.data.message.TextContent;
 import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.exception.UnsupportedFeatureException;
+import dev.langchain4j.internal.JsonSchemaElementUtils;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
@@ -30,6 +31,7 @@ import dev.langchain4j.model.chat.request.ChatRequestParameters;
 import dev.langchain4j.model.chat.request.ResponseFormat;
 import dev.langchain4j.model.chat.request.ResponseFormatType;
 import dev.langchain4j.model.chat.request.ToolChoice;
+import dev.langchain4j.model.chat.request.json.JsonNativeSchema;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.request.json.JsonSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -50,6 +52,10 @@ import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InOrder;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.common.Json;
 
 /**
  * Contains all the common tests that every {@link ChatModel}
@@ -1419,6 +1425,49 @@ public abstract class AbstractBaseChatModelIT<M> {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("models")
+    @DisabledIf("supportsJsonResponseFormatWithNativeSchema")
+    protected void should_fail_if_JsonNativeSchema_format_with_schema_is_not_supported(M model) throws Exception {
+        var mapper = new ObjectMapper();
+        var rawSchema = mapper.readTree("""
+            {
+                "$schema": "http://json-schema.org/draft-07/schema#",
+                "type": "object",
+                "properties": {
+                    "city": {
+                        "type": "string"
+                    }
+                },
+            }""");
+
+
+     ResponseFormat schemaFormat = ResponseFormat.builder()
+            .type(ResponseFormatType.JSON)
+            .jsonSchema(JsonSchema.builder()
+                    .name("Answer")
+                    .rootElement(JsonNativeSchema.builder().schema(rawSchema).build())
+                    .build())
+            .build();
+
+        // given
+        ChatRequest chatRequest = ChatRequest.builder()
+                .messages(UserMessage.from("What is the capital of Germany?"))
+                .parameters(ChatRequestParameters.builder()
+                        .responseFormat(schemaFormat)
+                        .build())
+                .build();
+
+        // when-then
+        AbstractThrowableAssert<?, ?> throwableAssert = assertThatThrownBy(() -> chat(model, chatRequest));
+        if (assertExceptionType()) {
+            throwableAssert
+                    .isExactlyInstanceOf(UnsupportedFeatureException.class)
+                    .hasMessageContaining("JSON response format")
+                    .hasMessageContaining("not support");
+        }
+    }
+
     // MULTI MODALITY: IMAGES: BASE64
 
     @ParameterizedTest
@@ -1631,6 +1680,10 @@ public abstract class AbstractBaseChatModelIT<M> {
     protected boolean supportsToolsAndJsonResponseFormatWithSchema() {
         return supportsTools() && supportsJsonResponseFormatWithSchema();
     }
+
+  protected boolean supportsJsonResponseFormatWithNativeSchema() {
+    return true;
+  }
 
     protected boolean supportsSingleImageInputAsBase64EncodedString() {
         return true;

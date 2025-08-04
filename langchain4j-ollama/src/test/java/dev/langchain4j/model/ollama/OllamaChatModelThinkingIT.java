@@ -4,7 +4,6 @@ import static dev.langchain4j.JsonTestUtils.jsonify;
 import static dev.langchain4j.model.ollama.AbstractOllamaLanguageModelInfrastructure.ollamaBaseUrl;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.http.client.HttpRequest;
@@ -13,11 +12,13 @@ import dev.langchain4j.http.client.SpyingHttpClient;
 import dev.langchain4j.http.client.jdk.JdkHttpClient;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructure {
 
-    private final SpyingHttpClient spyingHttpClient = new SpyingHttpClient(JdkHttpClient.builder().build());
+    private final SpyingHttpClient spyingHttpClient =
+            new SpyingHttpClient(JdkHttpClient.builder().build());
 
     @Test
     void should_think_and_return_thinking() {
@@ -30,10 +31,8 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
                 .httpClientBuilder(new MockHttpClientBuilder(spyingHttpClient))
                 .baseUrl(ollamaBaseUrl(ollama))
                 .modelName(MODEL_NAME)
-
                 .think(think)
                 .returnThinking(returnThinking)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -45,9 +44,7 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
 
         // then
         AiMessage aiMessage = chatResponse.aiMessage();
-        assertThat(aiMessage.text())
-                .containsIgnoringCase("Berlin")
-                .doesNotContain("<think>", "</think>");
+        assertThat(aiMessage.text()).containsIgnoringCase("Berlin").doesNotContain("<think>", "</think>");
         assertThat(aiMessage.thinking()).isNotBlank();
 
         // given
@@ -79,10 +76,8 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
         ChatModel model = OllamaChatModel.builder()
                 .baseUrl(ollamaBaseUrl(ollama))
                 .modelName(MODEL_NAME)
-
                 .think(think)
                 .returnThinking(returnThinking)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -94,12 +89,11 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
 
         // then
         AiMessage aiMessage = chatResponse.aiMessage();
-        assertThat(aiMessage.text())
-                .containsIgnoringCase("Berlin")
-                .doesNotContain("<think>", "</think>");
+        assertThat(aiMessage.text()).containsIgnoringCase("Berlin").doesNotContain("<think>", "</think>");
         assertThat(aiMessage.thinking()).isNull();
 
-        // TODO verify that raw HTTP response contains "thinking" field and that it is not sent back on the follow-up request
+        // TODO verify that raw HTTP response contains "thinking" field and that it is not sent back on the follow-up
+        // request
     }
 
     @Test
@@ -111,9 +105,7 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
         ChatModel model = OllamaChatModel.builder()
                 .baseUrl(ollamaBaseUrl(ollama))
                 .modelName(MODEL_NAME)
-
                 .think(think)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -125,9 +117,7 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
 
         // then
         AiMessage aiMessage = chatResponse.aiMessage();
-        assertThat(aiMessage.text())
-                .containsIgnoringCase("Berlin")
-                .doesNotContain("<think>", "</think>");
+        assertThat(aiMessage.text()).containsIgnoringCase("Berlin").doesNotContain("<think>", "</think>");
         assertThat(aiMessage.thinking()).isNull();
 
         // TODO verify that raw HTTP response does not contain "thinking" field
@@ -142,9 +132,7 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
         ChatModel model = OllamaChatModel.builder()
                 .baseUrl(ollamaBaseUrl(ollama))
                 .modelName(MODEL_NAME)
-
                 .think(think)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -156,9 +144,7 @@ class OllamaChatModelThinkingIT extends AbstractOllamaThinkingModelInfrastructur
 
         // then
         AiMessage aiMessage = chatResponse.aiMessage();
-        assertThat(aiMessage.text())
-                .containsIgnoringCase("Berlin")
-                .contains("<think>", "</think>");
+        assertThat(aiMessage.text()).containsIgnoringCase("Berlin").contains("<think>", "</think>");
         assertThat(aiMessage.thinking()).isNull();
     }
 }

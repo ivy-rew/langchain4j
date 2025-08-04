@@ -30,7 +30,6 @@ import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.request.ChatRequest;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
-import dev.langchain4j.model.chat.response.PartialThinking;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.service.tool.BeforeToolExecution;
 import dev.langchain4j.service.tool.ToolExecution;
@@ -322,9 +321,13 @@ class StreamingAiServicesWithToolsIT {
 
         interface TokenStreamHandler {
             void onPartialResponse(String partialResponse);
+
             void beforeToolExecution(BeforeToolExecution beforeToolExecution);
+
             void onToolExecuted(ToolExecution toolExecution);
+
             void onError(Throwable error);
+
             void onCompleteResponse(ChatResponse completeResponse);
         }
 
@@ -332,7 +335,8 @@ class StreamingAiServicesWithToolsIT {
         CompletableFuture<ChatResponse> futureResponse = new CompletableFuture<>();
 
         // when
-        assistant.chat(userMessage)
+        assistant
+                .chat(userMessage)
                 .onPartialResponse(partialResponse -> tokenStreamHandler.onPartialResponse(partialResponse))
                 .beforeToolExecution(beforeToolExecution -> tokenStreamHandler.beforeToolExecution(beforeToolExecution))
                 .onToolExecuted(toolExecution -> tokenStreamHandler.onToolExecuted(toolExecution))
@@ -360,10 +364,16 @@ class StreamingAiServicesWithToolsIT {
         // then
         InOrder inOrder = inOrder(tokenStreamHandler);
 
-        inOrder.verify(tokenStreamHandler).beforeToolExecution(argThat(bfe -> bfe.request().arguments().contains("Munich")));
-        inOrder.verify(tokenStreamHandler).onToolExecuted(argThat(toolExecution -> toolExecution.request().arguments().contains("Munich")));
-        inOrder.verify(tokenStreamHandler).beforeToolExecution(argThat(bfe -> bfe.request().arguments().contains("London")));
-        inOrder.verify(tokenStreamHandler).onToolExecuted(argThat(toolExecution -> toolExecution.request().arguments().contains("London")));
+        inOrder.verify(tokenStreamHandler)
+                .beforeToolExecution(argThat(bfe -> bfe.request().arguments().contains("Munich")));
+        inOrder.verify(tokenStreamHandler)
+                .onToolExecuted(argThat(
+                        toolExecution -> toolExecution.request().arguments().contains("Munich")));
+        inOrder.verify(tokenStreamHandler)
+                .beforeToolExecution(argThat(bfe -> bfe.request().arguments().contains("London")));
+        inOrder.verify(tokenStreamHandler)
+                .onToolExecuted(argThat(
+                        toolExecution -> toolExecution.request().arguments().contains("London")));
 
         inOrder.verify(tokenStreamHandler, atLeastOnce()).onPartialResponse(any());
         inOrder.verify(tokenStreamHandler).onCompleteResponse(any());

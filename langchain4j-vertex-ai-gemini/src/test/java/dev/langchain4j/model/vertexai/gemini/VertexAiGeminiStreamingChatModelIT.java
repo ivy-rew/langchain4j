@@ -159,8 +159,8 @@ class VertexAiGeminiStreamingChatModelIT {
     void should_accept_text_and_image_from_public_url() {
 
         // given
-        UserMessage userMessage = UserMessage.from(
-                ImageContent.from(CAT_IMAGE_URL), TextContent.from("What do you see?"));
+        UserMessage userMessage =
+                UserMessage.from(ImageContent.from(CAT_IMAGE_URL), TextContent.from("What do you see?"));
 
         // when
         TestStreamingChatResponseHandler handler = new TestStreamingChatResponseHandler();
@@ -176,8 +176,7 @@ class VertexAiGeminiStreamingChatModelIT {
 
         // given
         UserMessage userMessage = UserMessage.from(
-                ImageContent.from("gs://langchain4j-test/cat.png"),
-                TextContent.from("What do you see?"));
+                ImageContent.from("gs://langchain4j-test/cat.png"), TextContent.from("What do you see?"));
 
         // when
         TestStreamingChatResponseHandler handler = new TestStreamingChatResponseHandler();
@@ -193,8 +192,8 @@ class VertexAiGeminiStreamingChatModelIT {
 
         // given
         String base64Data = Base64.getEncoder().encodeToString(readBytes(CAT_IMAGE_URL));
-        UserMessage userMessage = UserMessage.from(
-                ImageContent.from(base64Data, "image/png"), TextContent.from("What do you see?"));
+        UserMessage userMessage =
+                UserMessage.from(ImageContent.from(base64Data, "image/png"), TextContent.from("What do you see?"));
 
         // when
         TestStreamingChatResponseHandler handler = new TestStreamingChatResponseHandler();

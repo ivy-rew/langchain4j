@@ -24,7 +24,6 @@ import dev.langchain4j.model.mistralai.internal.api.MistralAiChatCompletionReque
 import dev.langchain4j.model.mistralai.internal.api.MistralAiChatCompletionResponse;
 import dev.langchain4j.model.mistralai.internal.client.MistralAiClient;
 import dev.langchain4j.model.mistralai.spi.MistralAiChatModelBuilderFactory;
-
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
@@ -97,13 +96,14 @@ public class MistralAiChatModel implements ChatModel {
         MistralAiChatCompletionResponse mistralAiResponse =
                 withRetryMappingExceptions(() -> client.chatCompletion(request), maxRetries);
 
-         return ChatResponse.builder()
+        return ChatResponse.builder()
                 .aiMessage(aiMessageFrom(mistralAiResponse))
                 .metadata(ChatResponseMetadata.builder()
                         .id(mistralAiResponse.getId())
                         .modelName(mistralAiResponse.getModel())
                         .tokenUsage(tokenUsageFrom(mistralAiResponse.getUsage()))
-                        .finishReason(finishReasonFrom(mistralAiResponse.getChoices().get(0).getFinishReason()))
+                        .finishReason(finishReasonFrom(
+                                mistralAiResponse.getChoices().get(0).getFinishReason()))
                         .build())
                 .build();
     }

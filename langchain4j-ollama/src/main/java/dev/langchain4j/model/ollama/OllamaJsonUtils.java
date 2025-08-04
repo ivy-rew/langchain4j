@@ -1,11 +1,11 @@
 package dev.langchain4j.model.ollama;
 
+import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.Internal;
-
-import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
 
 @Internal
 class OllamaJsonUtils {
@@ -14,11 +14,9 @@ class OllamaJsonUtils {
         throw new InstantiationException("Can't instantiate this utility class.");
     }
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .enable(INDENT_OUTPUT);
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper().enable(INDENT_OUTPUT);
 
-    private static final ObjectMapper OBJECT_MAPPER_WITHOUT_IDENT = new ObjectMapper()
-            .disable(INDENT_OUTPUT);
+    private static final ObjectMapper OBJECT_MAPPER_WITHOUT_IDENT = new ObjectMapper().disable(INDENT_OUTPUT);
 
     static String toJson(Object object) {
         try {

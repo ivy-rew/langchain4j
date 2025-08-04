@@ -1,17 +1,17 @@
 package dev.langchain4j.model.bedrock;
 
-import dev.langchain4j.model.chat.request.ChatRequestParameters;
-import dev.langchain4j.model.chat.request.DefaultChatRequestParameters;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import static dev.langchain4j.internal.Utils.copy;
 import static dev.langchain4j.internal.Utils.getOrDefault;
 
+import dev.langchain4j.model.chat.request.ChatRequestParameters;
+import dev.langchain4j.model.chat.request.DefaultChatRequestParameters;
+import java.util.HashMap;
+import java.util.Map;
+
 public class BedrockChatRequestParameters extends DefaultChatRequestParameters {
 
-    public static final BedrockChatRequestParameters EMPTY = BedrockChatRequestParameters.builder().build();
+    public static final BedrockChatRequestParameters EMPTY =
+            BedrockChatRequestParameters.builder().build();
 
     private final Map<String, Object> additionalModelRequestFields;
 
@@ -44,7 +44,8 @@ public class BedrockChatRequestParameters extends DefaultChatRequestParameters {
         public Builder overrideWith(ChatRequestParameters parameters) {
             super.overrideWith(parameters);
             if (parameters instanceof BedrockChatRequestParameters bedrockRequestParameters) {
-                additionalModelRequestFields(getOrDefault(bedrockRequestParameters.additionalModelRequestFields, additionalModelRequestFields));
+                additionalModelRequestFields(getOrDefault(
+                        bedrockRequestParameters.additionalModelRequestFields, additionalModelRequestFields));
             }
             return this;
         }
@@ -73,10 +74,8 @@ public class BedrockChatRequestParameters extends DefaultChatRequestParameters {
                 if (additionalModelRequestFields == null) {
                     additionalModelRequestFields = new HashMap<>();
                 }
-                Map<?, ?> reasoningConfig = Map.ofEntries(
-                        Map.entry("type", "enabled"),
-                        Map.entry("budget_tokens", tokenBudget)
-                );
+                Map<?, ?> reasoningConfig =
+                        Map.ofEntries(Map.entry("type", "enabled"), Map.entry("budget_tokens", tokenBudget));
                 additionalModelRequestFields.put("reasoning_config", reasoningConfig);
             }
             return this;

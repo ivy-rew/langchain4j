@@ -1,16 +1,14 @@
 package dev.langchain4j.model.googleai;
 
+import static dev.langchain4j.internal.Utils.isNullOrEmpty;
+import static dev.langchain4j.model.googleai.Json.toJsonWithoutIndent;
+import static dev.langchain4j.model.googleai.SchemaMapper.fromJsonSchemaToGSchema;
+
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static dev.langchain4j.internal.Utils.isNullOrEmpty;
-import static dev.langchain4j.model.googleai.Json.toJson;
-import static dev.langchain4j.model.googleai.Json.toJsonWithoutIndent;
-import static dev.langchain4j.model.googleai.SchemaMapper.fromJsonSchemaToGSchema;
 
 class FunctionMapper {
 
@@ -32,10 +30,9 @@ class FunctionMapper {
         }
 
         List<GeminiFunctionDeclaration> functionDeclarations = specifications.stream()
-            .map(specification -> {
-                GeminiFunctionDeclaration.GeminiFunctionDeclarationBuilder fnBuilder =
-                    GeminiFunctionDeclaration.builder()
-                            .name(specification.name());
+                .map(specification -> {
+                    GeminiFunctionDeclaration.GeminiFunctionDeclarationBuilder fnBuilder =
+                            GeminiFunctionDeclaration.builder().name(specification.name());
 
                     if (specification.description() != null) {
                         fnBuilder.description(specification.description());
@@ -45,10 +42,10 @@ class FunctionMapper {
                         fnBuilder.parameters(fromJsonSchemaToGSchema(specification.parameters()));
                     }
 
-                return fnBuilder.build();
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+                    return fnBuilder.build();
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         if (!functionDeclarations.isEmpty()) {
             tool.functionDeclarations(functionDeclarations);

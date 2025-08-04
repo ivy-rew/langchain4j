@@ -3,13 +3,11 @@ package dev.langchain4j.model.bedrock;
 import static dev.langchain4j.model.bedrock.AwsDocumentConverter.documentFromJson;
 import static java.util.Objects.nonNull;
 
+import dev.langchain4j.Internal;
 import java.util.ArrayList;
 import java.util.List;
-
-import dev.langchain4j.Internal;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlock;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockDelta;
-import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockDeltaEvent;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockStart;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockStartEvent;
 import software.amazon.awssdk.services.bedrockruntime.model.ContentBlockStopEvent;
@@ -111,10 +109,13 @@ class ConverseResponseFromStreamBuilder {
                                 .signature(thinkingSignatureBuilder.toString())
                                 .build())
                         .build();
-                contents.add(ContentBlock.builder().reasoningContent(reasoningContent).build());
+                contents.add(ContentBlock.builder()
+                        .reasoningContent(reasoningContent)
+                        .build());
             }
             contents.add(ContentBlock.builder().text(stringBuilder.toString()).build());
-            contents.addAll(toolUseBlocks.stream().map(ContentBlock::fromToolUse).toList());
+            contents.addAll(
+                    toolUseBlocks.stream().map(ContentBlock::fromToolUse).toList());
             converseResponseBuilder.output(builder -> builder.message(
                             this.messageBuilder.content(contents).build())
                     .build());

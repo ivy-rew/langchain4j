@@ -194,8 +194,8 @@ class VertexAiGeminiChatModelIT {
 
         // given
         String base64Data = Base64.getEncoder().encodeToString(readBytes(CAT_IMAGE_URL));
-        UserMessage userMessage = UserMessage.from(
-                ImageContent.from(base64Data, "image/png"), TextContent.from("What do you see?"));
+        UserMessage userMessage =
+                UserMessage.from(ImageContent.from(base64Data, "image/png"), TextContent.from("What do you see?"));
 
         // when
         ChatResponse response = imageModel.chat(userMessage);

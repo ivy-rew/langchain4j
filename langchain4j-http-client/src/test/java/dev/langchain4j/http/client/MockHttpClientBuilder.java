@@ -1,7 +1,6 @@
 package dev.langchain4j.http.client;
 
 import dev.langchain4j.Internal;
-
 import java.time.Duration;
 
 @Internal

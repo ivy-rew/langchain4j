@@ -3,9 +3,8 @@ package dev.langchain4j.model.vertexai.gemini.common;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.common.AbstractChatModelIT;
 import dev.langchain4j.model.vertexai.gemini.VertexAiGeminiChatModel;
-import org.junit.jupiter.api.AfterEach;
-
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 
 class VertexAiGeminiChatModelIT extends AbstractChatModelIT {
 
@@ -21,7 +20,7 @@ class VertexAiGeminiChatModelIT extends AbstractChatModelIT {
                         .modelName("gemini-2.0-flash")
                         .build()
                 // TODO add more model configs, see OpenAiChatModelIT
-        );
+                );
     }
 
     @Override

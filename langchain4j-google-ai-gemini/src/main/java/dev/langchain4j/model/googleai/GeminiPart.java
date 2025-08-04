@@ -28,8 +28,7 @@ class GeminiPart {
             @JsonProperty("executableCode") GeminiExecutableCode executableCode,
             @JsonProperty("codeExecutionResult") GeminiCodeExecutionResult codeExecutionResult,
             @JsonProperty("thought") Boolean thought,
-            @JsonProperty("thoughtSignature") String thoughtSignature
-    ) {
+            @JsonProperty("thoughtSignature") String thoughtSignature) {
         this.text = text;
         this.inlineData = inlineData;
         this.functionCall = functionCall;
@@ -135,23 +134,30 @@ class GeminiPart {
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, inlineData, functionCall, functionResponse, fileData,
-                executableCode, codeExecutionResult, thought, thoughtSignature);
+        return Objects.hash(
+                text,
+                inlineData,
+                functionCall,
+                functionResponse,
+                fileData,
+                executableCode,
+                codeExecutionResult,
+                thought,
+                thoughtSignature);
     }
 
     @Override
     public String toString() {
-        return "GeminiPart{" +
-                "text='" + text + '\'' +
-                ", inlineData=" + inlineData +
-                ", functionCall=" + functionCall +
-                ", functionResponse=" + functionResponse +
-                ", fileData=" + fileData +
-                ", executableCode=" + executableCode +
-                ", codeExecutionResult=" + codeExecutionResult +
-                ", thought=" + thought +
-                ", thoughtSignature='" + thoughtSignature + '\'' +
-                '}';
+        return "GeminiPart{" + "text='"
+                + text + '\'' + ", inlineData="
+                + inlineData + ", functionCall="
+                + functionCall + ", functionResponse="
+                + functionResponse + ", fileData="
+                + fileData + ", executableCode="
+                + executableCode + ", codeExecutionResult="
+                + codeExecutionResult + ", thought="
+                + thought + ", thoughtSignature='"
+                + thoughtSignature + '\'' + '}';
     }
 
     public static class GeminiPartBuilder {
@@ -166,8 +172,7 @@ class GeminiPart {
         private Boolean thought;
         private String thoughtSignature;
 
-        GeminiPartBuilder() {
-        }
+        GeminiPartBuilder() {}
 
         public GeminiPartBuilder text(String text) {
             this.text = text;
@@ -215,8 +220,16 @@ class GeminiPart {
         }
 
         public GeminiPart build() {
-            return new GeminiPart(this.text, this.inlineData, this.functionCall, this.functionResponse, this.fileData,
-                    this.executableCode, this.codeExecutionResult, this.thought, this.thoughtSignature);
+            return new GeminiPart(
+                    this.text,
+                    this.inlineData,
+                    this.functionCall,
+                    this.functionResponse,
+                    this.fileData,
+                    this.executableCode,
+                    this.codeExecutionResult,
+                    this.thought,
+                    this.thoughtSignature);
         }
     }
 }

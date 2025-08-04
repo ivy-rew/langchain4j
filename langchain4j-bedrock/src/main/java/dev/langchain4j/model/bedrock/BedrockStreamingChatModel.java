@@ -81,7 +81,8 @@ public class BedrockStreamingChatModel extends AbstractBedrockChatModel implemen
                             if (event.start().type() == ContentBlockStart.Type.TOOL_USE) {
                                 toolCallBuilder.updateIndex(toolCallBuilder.index() + 1);
                                 toolCallBuilder.updateId(event.start().toolUse().toolUseId());
-                                toolCallBuilder.updateName(event.start().toolUse().name());
+                                toolCallBuilder.updateName(
+                                        event.start().toolUse().name());
                             }
                             responseBuilder.append(event);
                         })
@@ -127,18 +128,19 @@ public class BedrockStreamingChatModel extends AbstractBedrockChatModel implemen
                                 log.debug("onMetadata: {}", event);
                             }
                             responseBuilder.append(event);
-                            ChatResponse response = responseFrom(responseBuilder.build(), converseStreamRequest.modelId());
+                            ChatResponse response =
+                                    responseFrom(responseBuilder.build(), converseStreamRequest.modelId());
                             onCompleteResponse(handler, response);
                         })
                         .build())
                 .build();
-            this.client.converseStream(converseStreamRequest, converseStreamResponseHandler)
-                    .exceptionally(ex->{
-                        RuntimeException mappedError = BedrockExceptionMapper.INSTANCE.mapException(ex);
-                        withLoggingExceptions(() -> handler.onError(mappedError));
-                        return null;
-                    });
-
+        this.client
+                .converseStream(converseStreamRequest, converseStreamResponseHandler)
+                .exceptionally(ex -> {
+                    RuntimeException mappedError = BedrockExceptionMapper.INSTANCE.mapException(ex);
+                    withLoggingExceptions(() -> handler.onError(mappedError));
+                    return null;
+                });
     }
 
     @Override

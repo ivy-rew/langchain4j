@@ -152,8 +152,7 @@ public class VertexAiEmbeddingModel extends DimensionAwareEmbeddingModel {
                 .taskType(taskType)
                 .titleMetadataKey(titleMetadataKey)
                 .outputDimensionality(outputDimensionality)
-                .autoTruncate(autoTruncate)
-        );
+                .autoTruncate(autoTruncate));
     }
 
     @Override

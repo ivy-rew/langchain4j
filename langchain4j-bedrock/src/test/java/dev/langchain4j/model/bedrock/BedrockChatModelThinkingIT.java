@@ -3,7 +3,6 @@ package dev.langchain4j.model.bedrock;
 import static dev.langchain4j.model.bedrock.common.BedrockAiServicesIT.sleepIfNeeded;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
 import dev.langchain4j.agent.tool.ToolExecutionRequest;
 import dev.langchain4j.agent.tool.ToolSpecification;
 import dev.langchain4j.data.message.AiMessage;
@@ -12,6 +11,7 @@ import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.request.json.JsonObjectSchema;
 import dev.langchain4j.model.chat.response.ChatResponse;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -25,10 +25,11 @@ class BedrockChatModelThinkingIT {
     static final int SLEEPING_TIME_MULTIPLIER = 10;
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "us.anthropic.claude-sonnet-4-20250514-v1:0",
-            "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-    })
+    @ValueSource(
+            strings = {
+                "us.anthropic.claude-sonnet-4-20250514-v1:0",
+                "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            })
     void should_return_and_send_thinking(String modelId) {
 
         // given
@@ -41,10 +42,8 @@ class BedrockChatModelThinkingIT {
 
         ChatModel model = BedrockChatModel.builder()
                 .modelId(modelId)
-
                 .returnThinking(returnThinking)
                 .defaultRequestParameters(parameters)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -75,11 +74,12 @@ class BedrockChatModelThinkingIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "us.anthropic.claude-sonnet-4-20250514-v1:0",
-            "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "us.deepseek.r1-v1:0"
-    })
+    @ValueSource(
+            strings = {
+                "us.anthropic.claude-sonnet-4-20250514-v1:0",
+                "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "us.deepseek.r1-v1:0"
+            })
     void should_return_and_NOT_send_thinking(String modelId) {
 
         // given
@@ -95,11 +95,9 @@ class BedrockChatModelThinkingIT {
 
         ChatModel model = BedrockChatModel.builder()
                 .modelId(modelId)
-
                 .returnThinking(returnThinking)
                 .sendThinking(sendThinking)
                 .defaultRequestParameters(parameters)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -134,10 +132,11 @@ class BedrockChatModelThinkingIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "us.anthropic.claude-sonnet-4-20250514-v1:0",
-            "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-    })
+    @ValueSource(
+            strings = {
+                "us.anthropic.claude-sonnet-4-20250514-v1:0",
+                "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+            })
     void should_return_and_send_thinking_with_tools(String modelId) {
 
         // given
@@ -159,10 +158,8 @@ class BedrockChatModelThinkingIT {
 
         ChatModel model = BedrockChatModel.builder()
                 .modelId(modelId)
-
                 .returnThinking(returnThinking)
                 .defaultRequestParameters(parameters)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -177,7 +174,8 @@ class BedrockChatModelThinkingIT {
         assertThat(aiMessage1.thinking()).isNotBlank();
         assertThat(aiMessage1.attribute("thinking_signature", String.class)).isNotBlank();
         assertThat(aiMessage1.toolExecutionRequests()).hasSize(1);
-        ToolExecutionRequest toolExecutionRequest1 = aiMessage1.toolExecutionRequests().get(0);
+        ToolExecutionRequest toolExecutionRequest1 =
+                aiMessage1.toolExecutionRequests().get(0);
         assertThat(toolExecutionRequest1.name()).isEqualTo(toolSpecification.name());
         assertThat(toolExecutionRequest1.arguments()).contains("Munich");
 
@@ -207,7 +205,8 @@ class BedrockChatModelThinkingIT {
         assertThat(aiMessage3.thinking()).isNotBlank();
         assertThat(aiMessage3.attribute("thinking_signature", String.class)).isNotBlank();
         assertThat(aiMessage3.toolExecutionRequests()).hasSize(1);
-        ToolExecutionRequest toolExecutionRequest2 = aiMessage3.toolExecutionRequests().get(0);
+        ToolExecutionRequest toolExecutionRequest2 =
+                aiMessage3.toolExecutionRequests().get(0);
         assertThat(toolExecutionRequest2.name()).isEqualTo(toolSpecification.name());
         assertThat(toolExecutionRequest2.arguments()).contains("Paris");
 
@@ -216,7 +215,8 @@ class BedrockChatModelThinkingIT {
 
         // when
         sleepIfNeeded(SLEEPING_TIME_MULTIPLIER);
-        ChatResponse chatResponse4 = model.chat(userMessage1, aiMessage1, toolResultMessage1, aiMessage2, userMessage2, aiMessage3, toolResultMessage2);
+        ChatResponse chatResponse4 = model.chat(
+                userMessage1, aiMessage1, toolResultMessage1, aiMessage2, userMessage2, aiMessage3, toolResultMessage2);
 
         // then
         AiMessage aiMessage4 = chatResponse4.aiMessage();
@@ -251,11 +251,9 @@ class BedrockChatModelThinkingIT {
                 .build();
 
         ChatModel model = BedrockChatModel.builder()
-
                 .modelId(modelId)
                 .returnThinking(returnThinking)
                 .defaultRequestParameters(parameters)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -272,7 +270,8 @@ class BedrockChatModelThinkingIT {
         assertThat(aiMessage1.attribute("thinking_signature", String.class)).isNotBlank();
 
         assertThat(aiMessage1.toolExecutionRequests()).hasSize(1);
-        ToolExecutionRequest toolExecutionRequest1 = aiMessage1.toolExecutionRequests().get(0);
+        ToolExecutionRequest toolExecutionRequest1 =
+                aiMessage1.toolExecutionRequests().get(0);
         assertThat(toolExecutionRequest1.name()).isEqualTo(toolSpecification.name());
         assertThat(toolExecutionRequest1.arguments()).contains("Munich");
 
@@ -306,7 +305,8 @@ class BedrockChatModelThinkingIT {
         assertThat(aiMessage3.attribute("thinking_signature", String.class)).isNotBlank();
 
         assertThat(aiMessage3.toolExecutionRequests()).hasSize(1);
-        ToolExecutionRequest toolExecutionRequest2 = aiMessage3.toolExecutionRequests().get(0);
+        ToolExecutionRequest toolExecutionRequest2 =
+                aiMessage3.toolExecutionRequests().get(0);
         assertThat(toolExecutionRequest2.name()).isEqualTo(toolSpecification.name());
         assertThat(toolExecutionRequest2.arguments()).contains("Paris");
 
@@ -315,7 +315,8 @@ class BedrockChatModelThinkingIT {
 
         // when
         sleepIfNeeded(SLEEPING_TIME_MULTIPLIER);
-        ChatResponse chatResponse4 = model.chat(userMessage1, aiMessage1, toolResultMessage1, aiMessage2, userMessage2, aiMessage3, toolResultMessage2);
+        ChatResponse chatResponse4 = model.chat(
+                userMessage1, aiMessage1, toolResultMessage1, aiMessage2, userMessage2, aiMessage3, toolResultMessage2);
 
         // then
         AiMessage aiMessage4 = chatResponse4.aiMessage();
@@ -328,11 +329,12 @@ class BedrockChatModelThinkingIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "us.anthropic.claude-sonnet-4-20250514-v1:0",
-            "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "us.deepseek.r1-v1:0"
-    })
+    @ValueSource(
+            strings = {
+                "us.anthropic.claude-sonnet-4-20250514-v1:0",
+                "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "us.deepseek.r1-v1:0"
+            })
     void should_NOT_return_thinking(String modelId) {
 
         // given
@@ -347,10 +349,8 @@ class BedrockChatModelThinkingIT {
 
         ChatModel model = BedrockChatModel.builder()
                 .modelId(modelId)
-
                 .returnThinking(returnThinking)
                 .defaultRequestParameters(parameters)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();
@@ -368,11 +368,12 @@ class BedrockChatModelThinkingIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-            "us.anthropic.claude-sonnet-4-20250514-v1:0",
-            "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-            "us.deepseek.r1-v1:0"
-    })
+    @ValueSource(
+            strings = {
+                "us.anthropic.claude-sonnet-4-20250514-v1:0",
+                "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+                "us.deepseek.r1-v1:0"
+            })
     void should_NOT_return_thinking_when_returnThinking_is_not_set(String modelId) {
 
         // given
@@ -387,10 +388,8 @@ class BedrockChatModelThinkingIT {
 
         ChatModel model = BedrockChatModel.builder()
                 .modelId(modelId)
-
                 .returnThinking(returnThinking)
                 .defaultRequestParameters(parameters)
-
                 .logRequests(true)
                 .logResponses(true)
                 .build();

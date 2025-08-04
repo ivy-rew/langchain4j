@@ -4,7 +4,6 @@ package dev.langchain4j.model.anthropic;
  * See more details <a href="https://docs.anthropic.com/claude/docs/models-overview">here</a>.
  */
 public enum AnthropicChatModelName {
-
     CLAUDE_OPUS_4_20250514("claude-opus-4-20250514"),
     CLAUDE_SONNET_4_20250514("claude-sonnet-4-20250514"),
 

@@ -63,8 +63,8 @@ public class VertexAiChatModel implements ChatModel {
 
     public VertexAiChatModel(Builder builder) {
         try {
-            PredictionServiceSettings.Builder settingsBuilder = PredictionServiceSettings.newBuilder()
-                    .setEndpoint(ensureNotBlank(builder.endpoint, "endpoint"));
+            PredictionServiceSettings.Builder settingsBuilder =
+                    PredictionServiceSettings.newBuilder().setEndpoint(ensureNotBlank(builder.endpoint, "endpoint"));
             if (builder.credentials != null) {
                 GoogleCredentials scopedCredentials =
                         builder.credentials.createScoped("https://www.googleapis.com/auth/cloud-platform");
@@ -79,8 +79,8 @@ public class VertexAiChatModel implements ChatModel {
                 ensureNotBlank(builder.location, "location"),
                 ensureNotBlank(builder.publisher, "publisher"),
                 ensureNotBlank(builder.modelName, "modelName"));
-        this.vertexAiParameters = new VertexAiParameters(
-                builder.temperature, builder.maxOutputTokens, builder.topK, builder.topP);
+        this.vertexAiParameters =
+                new VertexAiParameters(builder.temperature, builder.maxOutputTokens, builder.topK, builder.topP);
         this.maxRetries = getOrDefault(builder.maxRetries, 2);
     }
 
@@ -109,8 +109,7 @@ public class VertexAiChatModel implements ChatModel {
                 .maxOutputTokens(maxOutputTokens)
                 .topK(topK)
                 .topP(topP)
-                .maxRetries(maxRetries)
-        );
+                .maxRetries(maxRetries));
     }
 
     @Override

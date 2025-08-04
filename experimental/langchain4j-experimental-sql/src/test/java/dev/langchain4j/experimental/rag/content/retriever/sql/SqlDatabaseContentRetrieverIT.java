@@ -1,22 +1,16 @@
 package dev.langchain4j.experimental.rag.content.retriever.sql;
 
+import static dev.langchain4j.model.mistralai.MistralAiChatModelName.MISTRAL_SMALL_LATEST;
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_1_NANO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.mistralai.MistralAiChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.rag.content.Content;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.query.Query;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.postgresql.ds.PGSimpleDataSource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -26,11 +20,16 @@ import java.sql.*;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
-
-import static dev.langchain4j.model.mistralai.MistralAiChatModelName.MISTRAL_SMALL_LATEST;
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_1_NANO;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import javax.sql.DataSource;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.postgresql.ds.PGSimpleDataSource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
 class SqlDatabaseContentRetrieverIT {
@@ -97,9 +96,7 @@ class SqlDatabaseContentRetrieverIT {
         // then
         assertThat(retrieved).hasSize(1);
 
-        assertThat(retrieved.get(0).textSegment().text())
-                .contains("SELECT")
-                .contains("5");
+        assertThat(retrieved.get(0).textSegment().text()).contains("SELECT").contains("5");
     }
 
     @ParameterizedTest
@@ -110,7 +107,8 @@ class SqlDatabaseContentRetrieverIT {
         ContentRetriever contentRetriever = contentRetrieverProvider.apply(dataSource);
 
         // when
-        List<Content> retrieved = contentRetriever.retrieve(Query.from("What is the total sales in dollars for each product?"));
+        List<Content> retrieved =
+                contentRetriever.retrieve(Query.from("What is the total sales in dollars for each product?"));
 
         // then
         assertThat(retrieved).hasSize(1);
@@ -127,9 +125,9 @@ class SqlDatabaseContentRetrieverIT {
         // given
         ContentRetriever contentRetriever = contentRetrieverProvider.apply(dataSource);
 
-        Query query = Query.from("Which quarter shows the highest sales?" +
-                "Reply in the following format: \"X,Y\" where X is a quarter number (from 1 to 4) " +
-                "and Y is sales for that quarter");
+        Query query = Query.from("Which quarter shows the highest sales?"
+                + "Reply in the following format: \"X,Y\" where X is a quarter number (from 1 to 4) "
+                + "and Y is sales for that quarter");
 
         // when
         List<Content> retrieved = contentRetriever.retrieve(query);
@@ -137,9 +135,7 @@ class SqlDatabaseContentRetrieverIT {
         // then
         assertThat(retrieved).hasSize(1);
 
-        assertThat(retrieved.get(0).textSegment().text())
-                .contains("SELECT")
-                .contains("2,283.37");
+        assertThat(retrieved.get(0).textSegment().text()).contains("SELECT").contains("2,283.37");
     }
 
     @ParameterizedTest
@@ -169,8 +165,7 @@ class SqlDatabaseContentRetrieverIT {
         ContentRetriever contentRetriever = contentRetrieverProvider.apply(dataSource);
 
         // when-then
-        assertThatCode(() -> contentRetriever.retrieve(Query.from("hello")))
-                .doesNotThrowAnyException();
+        assertThatCode(() -> contentRetriever.retrieve(Query.from("hello"))).doesNotThrowAnyException();
     }
 
     @ParameterizedTest
@@ -251,7 +246,8 @@ class SqlDatabaseContentRetrieverIT {
         long ordersHash = getTableHash(dataSource, "orders");
 
         // when
-        List<Content> retrieved = contentRetriever.retrieve(Query.from("Update email of customer with ID=1 to bad@guy.com"));
+        List<Content> retrieved =
+                contentRetriever.retrieve(Query.from("Update email of customer with ID=1 to bad@guy.com"));
 
         // then
         assertThat(retrieved).isEmpty();
@@ -262,7 +258,8 @@ class SqlDatabaseContentRetrieverIT {
     }
 
     private static void execute(String sql, DataSource dataSource) {
-        try (Connection connection = dataSource.getConnection(); Statement statement = connection.createStatement()) {
+        try (Connection connection = dataSource.getConnection();
+                Statement statement = connection.createStatement()) {
             for (String sqlStatement : sql.split(";")) {
                 statement.execute(sqlStatement.trim());
             }
@@ -274,8 +271,8 @@ class SqlDatabaseContentRetrieverIT {
     private static long getTableHash(DataSource dataSource, String tableName) {
         String query = "SELECT * FROM " + tableName;
         try (Connection conn = dataSource.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(query)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(query)) {
             StringBuilder dataBuilder = new StringBuilder();
             ResultSetMetaData metaData = rs.getMetaData();
             while (rs.next()) {
@@ -314,8 +311,7 @@ class SqlDatabaseContentRetrieverIT {
                 dataSource -> SqlDatabaseContentRetriever.builder()
                         .dataSource(dataSource)
                         .chatModel(mistralAiChatModel)
-                        .build()
-        );
+                        .build());
     }
 
     private static String read(String path) {
@@ -328,7 +324,10 @@ class SqlDatabaseContentRetrieverIT {
 
     private static Path toPath(String fileName) {
         try {
-            return Paths.get(SqlDatabaseContentRetrieverIT.class.getClassLoader().getResource(fileName).toURI());
+            return Paths.get(SqlDatabaseContentRetrieverIT.class
+                    .getClassLoader()
+                    .getResource(fileName)
+                    .toURI());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

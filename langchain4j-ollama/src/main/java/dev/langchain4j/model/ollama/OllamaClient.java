@@ -153,7 +153,8 @@ class OllamaClient {
         httpClient.execute(httpRequest, new OllamaServerSentEventParser(), new ServerSentEventListener() {
 
             final ToolCallBuilder toolCallBuilder = new ToolCallBuilder();
-            final OllamaStreamingResponseBuilder responseBuilder = new OllamaStreamingResponseBuilder(toolCallBuilder, returnThinking);
+            final OllamaStreamingResponseBuilder responseBuilder =
+                    new OllamaStreamingResponseBuilder(toolCallBuilder, returnThinking);
 
             @Override
             public void onEvent(ServerSentEvent event) {
@@ -188,7 +189,8 @@ class OllamaClient {
 
                         toolCallBuilder.updateName(toolCall.getFunction().getName());
 
-                        String partialArguments = toJsonWithoutIdent(toolCall.getFunction().getArguments());
+                        String partialArguments =
+                                toJsonWithoutIdent(toolCall.getFunction().getArguments());
                         if (isNotNullOrEmpty(partialArguments)) {
                             toolCallBuilder.appendArguments(partialArguments);
                         }

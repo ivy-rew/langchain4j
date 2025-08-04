@@ -6,7 +6,6 @@ import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.model.output.FinishReason;
 import dev.langchain4j.model.output.Response;
 import dev.langchain4j.model.output.TokenUsage;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,16 +61,9 @@ class StreamingChatResponseBuilder {
     Response<AiMessage> build() {
         if (!functionCalls.isEmpty()) {
             return Response.from(
-                AiMessage.from(FunctionCallHelper.fromFunctionCalls(functionCalls)),
-                tokenUsage,
-                finishReason
-            );
+                    AiMessage.from(FunctionCallHelper.fromFunctionCalls(functionCalls)), tokenUsage, finishReason);
         } else {
-            return Response.from(
-                AiMessage.from(contentBuilder.toString()),
-                tokenUsage,
-                finishReason
-            );
+            return Response.from(AiMessage.from(contentBuilder.toString()), tokenUsage, finishReason);
         }
     }
 }

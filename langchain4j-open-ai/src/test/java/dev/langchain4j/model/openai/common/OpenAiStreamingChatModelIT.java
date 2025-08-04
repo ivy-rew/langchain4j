@@ -1,5 +1,7 @@
 package dev.langchain4j.model.openai.common;
 
+import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_1_NANO;
+
 import dev.langchain4j.model.chat.StreamingChatModel;
 import dev.langchain4j.model.chat.common.AbstractStreamingChatModelIT;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
@@ -11,11 +13,8 @@ import dev.langchain4j.model.openai.OpenAiChatResponseMetadata;
 import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.model.openai.OpenAiTokenUsage;
 import dev.langchain4j.model.output.TokenUsage;
-import org.mockito.InOrder;
-
 import java.util.List;
-
-import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_1_NANO;
+import org.mockito.InOrder;
 
 class OpenAiStreamingChatModelIT extends AbstractStreamingChatModelIT {
 
@@ -32,33 +31,30 @@ class OpenAiStreamingChatModelIT extends AbstractStreamingChatModelIT {
     @Override
     protected List<StreamingChatModel> models() {
         return List.of(
-                defaultStreamingModelBuilder()
-                        .build(),
-                defaultStreamingModelBuilder()
-                        .strictTools(true)
-                        .build(),
+                defaultStreamingModelBuilder().build(),
+                defaultStreamingModelBuilder().strictTools(true).build(),
                 defaultStreamingModelBuilder()
                         .responseFormat("json_schema")
                         .strictJsonSchema(true)
                         .build()
                 // TODO json_object?
-        );
+                );
     }
 
     @Override
     protected StreamingChatModel createModelWith(ChatRequestParameters parameters) {
-        OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder openAiStreamingChatModelBuilder = OpenAiStreamingChatModel.builder()
-                .baseUrl(System.getenv("OPENAI_BASE_URL"))
-                .apiKey(System.getenv("OPENAI_API_KEY"))
-                .organizationId(System.getenv("OPENAI_ORGANIZATION_ID"))
-                .defaultRequestParameters(parameters)
-                .logRequests(true)
-                .logResponses(true);
+        OpenAiStreamingChatModel.OpenAiStreamingChatModelBuilder openAiStreamingChatModelBuilder =
+                OpenAiStreamingChatModel.builder()
+                        .baseUrl(System.getenv("OPENAI_BASE_URL"))
+                        .apiKey(System.getenv("OPENAI_API_KEY"))
+                        .organizationId(System.getenv("OPENAI_ORGANIZATION_ID"))
+                        .defaultRequestParameters(parameters)
+                        .logRequests(true)
+                        .logResponses(true);
         if (parameters.modelName() == null) {
             openAiStreamingChatModelBuilder.modelName(GPT_4_1_NANO);
         }
-        return openAiStreamingChatModelBuilder
-                .build();
+        return openAiStreamingChatModelBuilder.build();
     }
 
     @Override
@@ -85,9 +81,7 @@ class OpenAiStreamingChatModelIT extends AbstractStreamingChatModelIT {
 
     @Override
     public StreamingChatModel createModelWith(ChatModelListener listener) {
-        return defaultStreamingModelBuilder()
-                .listeners(List.of(listener))
-                .build();
+        return defaultStreamingModelBuilder().listeners(List.of(listener)).build();
     }
 
     @Override
